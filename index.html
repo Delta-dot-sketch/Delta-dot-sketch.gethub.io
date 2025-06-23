@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ultimate Game Hub</title>
+  <style>
+    :root {
+      --bg-light: #f0f2f5;
+      --bg-dark: #121212;
+      --text-light: #1c1e21;
+      --text-dark: #ffffff;
+      --card-bg-light: #ffffff;
+      --card-bg-dark: #1e1e1e;
+      --accent: #4caf50;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      background: var(--bg-light);
+      color: var(--text-light);
+      transition: background 0.3s, color 0.3s;
+    }
+    body.dark-mode {
+      background: var(--bg-dark);
+      color: var(--text-dark);
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--accent);
+      color: white;
+      padding: 15px 30px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+    .theme-toggle {
+      cursor: pointer;
+      padding: 8px 16px;
+      background: white;
+      color: var(--accent);
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+    .theme-toggle:hover {
+      background: #ecf0f1;
+    }
+    .search-bar {
+      text-align: center;
+      margin: 30px 0 10px;
+    }
+    input[type="text"] {
+      padding: 10px;
+      width: 60%;
+      max-width: 400px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .filter-buttons {
+      text-align: center;
+      margin: 20px 0;
+    }
+    .filter-buttons button {
+      margin: 5px;
+      padding: 8px 14px;
+      background: #ffffff;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .filter-buttons button:hover {
+      background: var(--accent);
+      color: white;
+    }
+    .game-category {
+      margin: 40px 20px;
+    }
+    .game-category h2 {
+      border-left: 5px solid var(--accent);
+      padding-left: 10px;
+    }
+    .games {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .game {
+      background: var(--card-bg-light);
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      overflow: hidden;
+      text-align: center;
+      padding: 10px;
+      transition: all 0.3s ease;
+    }
+    body.dark-mode .game {
+      background: var(--card-bg-dark);
+    }
+    .game:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+    .game img {
+      width: 100%;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 10px 10px 0 0;
+    }
+    .game-title {
+      font-size: 16px;
+      margin: 10px 0;
+    }
+    .game-desc {
+      font-size: 12px;
+      color: #7f8c8d;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Ultimate Game Hub</h1>
+    <button class="theme-toggle" onclick="toggleTheme()">Toggle Theme</button>
+  </header>
+
+  <div class="search-bar">
+    <input type="text" id="search" placeholder="Search for a game...">
+  </div>
+
+  <div class="filter-buttons" id="filter-buttons"></div>
+
+  <div id="game-container"></div>
+
+  <script>
+    const games = [
+      { title: "Snake", description: "Classic snake game.", category: "Arcade", img: "https://playsnake.org/favicon.ico", url: "https://playsnake.org/" },
+      { title: "Tetris", description: "The timeless tile-matching puzzle game.", category: "Puzzle", img: "https://tetris.com/favicon.ico", url: "https://tetris.com/play-tetris" },
+      { title: "2048", description: "Join the numbers and get to 2048!", category: "Puzzle", img: "https://play2048.co/favicon.ico", url: "https://play2048.co/" },
+      { title: "A Dark Room", description: "A minimalist text adventure game.", category: "Strategy", img: "https://adarkroom.doublespeakgames.com/favicon.ico", url: "https://adarkroom.doublespeakgames.com/" },
+      { title: "HexGL", description: "Futuristic high-speed racing game.", category: "Racing", img: "https://hexgl.bkcore.com/favicon.ico", url: "https://hexgl.bkcore.com/play/" },
+      { title: "Pacman", description: "Eat the dots and avoid the ghosts!", category: "Arcade", img: "https://www.google.com/logos/2010/pacman10-i.html", url: "https://www.google.com/logos/2010/pacman10-i.html" },
+      { title: "Line Rider", description: "Draw your own tracks and ride them.", category: "Puzzle", img: "https://linerider.com/favicon.ico", url: "https://linerider.com/" },
+      { title: "Slither.io", description: "Multiplayer snake game.", category: "PvP", img: "https://slither.io/favicon.ico", url: "https://slither.io/" },
+      { title: "Paper.io", description: "Expand your territory!",
+category: "PvP", img: "https://paper-io.com/favicon.ico", url: "https://paper-io.com/" },
+      { title: "Moto X3M", description: "Motorbike stunt racing game.", category: "Racing", img: "https://motox3m.co/favicon.ico", url: "https://motox3m.co/" },
+      { title: "Cut the Rope", description: "Feed candy to Om Nom!", category: "Puzzle", img: "https://cuttherope.net/favicon.ico", url: "https://cuttherope.net/" },
+      { title: "Chess.com", description: "Play chess online.", category: "Strategy", img: "https://www.chess.com/bundles/web/images/favicon.ico", url: "https://www.chess.com/" },
+      { title: "Krunker.io", description: "Fast-paced FPS multiplayer.", category: "PvP", img: "https://krunker.io/img/favicon.png", url: "https://krunker.io/" },
+      { title: "Shell Shockers", description: "FPS with eggs.", category: "PvP", img: "https://shellshock.io/favicon.ico", url: "https://shellshock.io/" },
+      { title: "Google Dino", description: "Offline T-Rex game.", category: "Arcade", img: "https://dino-chrome.com/favicon.ico", url: "https://dino-chrome.com/" },
+      { title: "Candy Crush", description: "Match-three puzzle game.", category: "Puzzle", img: "https://king.com/favicon.ico", url: "https://king.com/game/candycrush" },
+      { title: "Little Alchemy 2", description: "Mix and match elements.", category: "Puzzle", img: "https://littlealchemy2.com/favicon.ico", url: "https://littlealchemy2.com/" },
+      { title: "Stick War", description: "Command your stick army.", category: "Strategy", img: "https://stickwar.io/favicon.ico", url: "https://stickwar.io/" },
+      { title: "Zombs Royale", description: "Battle Royale action.", category: "PvP", img: "https://zombsroyale.io/favicon.ico", url: "https://zombsroyale.io/" },
+      { title: "Bloons Tower Defense", description: "Tower defense strategy.", category: "Strategy", img: "https://ninjakiwi.com/favicon.ico", url: "https://ninjakiwi.com/Games/Bloons-Games/" }
+    ];
+
+    const container = document.getElementById("game-container");
+    const filterContainer = document.getElementById("filter-buttons");
+
+    function getCategories() {
+      return [...new Set(games.map(game => game.category))];
+    }
+
+    function createCategoryFilters() {
+      getCategories().forEach(category => {
+        const btn = document.createElement("button");
+        btn.textContent = category;
+        btn.onclick = () => renderGames(document.getElementById("search").value, category);
+        filterContainer.appendChild(btn);
+      });
+    }
+
+    function renderGames(filter = "", categoryFilter = "") {
+      container.innerHTML = "";
+      const categories = {};
+      let hasMatch = false;
+
+      games.forEach(game => {
+        if (!game.title.toLowerCase().includes(filter.toLowerCase())) return;
+        if (categoryFilter && game.category !== categoryFilter) return;
+        if (!categories[game.category]) categories[game.category] = [];
+        categories[game.category].push(game);
+        hasMatch = true;
+      });
+
+      if (!hasMatch) {
+        container.innerHTML = "<p style='text-align:center; font-size: 1.2rem;'>No games found. Try a different search term.</p>";
+        return;
+      }
+
+      for (let category in categories) {
+        const section = document.createElement("div");
+        section.className = "game-category";
+        const header = document.createElement("h2");
+        header.textContent = category;
+        section.appendChild(header);
+
+        const row = document.createElement("div");
+        row.className = "games";
+
+        categories[category].forEach(game => {
+          const card = document.createElement("div");
+          card.className = "game";
+          card.innerHTML = `
+            <a href="${game.url}" target="_blank">
+              <img src="${game.img}" alt="${game.title}" onerror="this.onerror=null;this.src='https://via.placeholder.com/150x100?text=No+Image';" />
+              <div class="game-title">${game.title}</div>
+              <div class="game-desc">${game.description}</div>
+            </a>
+          `;
+          row.appendChild(card);
+        });
+
+        section.appendChild(row);
+        container.appendChild(section);
+      }
+    }
+
+    document.getElementById("search").addEventListener("input", e => {
+      renderGames(e.target.value);
+    });
+
+    function toggleTheme() {
+      document.body.classList.toggle("dark-mode");
+    }
+
+    createCategoryFilters();
+    renderGames();
+  </script>
+</body>
+</html>
